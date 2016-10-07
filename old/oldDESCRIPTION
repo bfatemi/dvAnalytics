@@ -1,0 +1,14 @@
+Package: dvAnalytics
+Type: Package
+Title: Advanced Analytics Powered by DaVinci Robotic Surgery
+Version: 0.1.0
+Author: Bobby Fatemi
+Maintainer: bobby.fatemi@intusurg.com
+Description: Functions that provide specific analytical tools for analysis and exploration of Robotic Surgery data.
+License: file LICENSE
+LazyData: TRUE
+Imports:
+    data.table,
+    stringr,
+    stats
+RoxygenNote: 5.0.1
