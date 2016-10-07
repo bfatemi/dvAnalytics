@@ -15,23 +15,25 @@
 #' @example inst/examples/ex_fnWeight.R
 #'
 fnWeight <- function(dat, resp = NULL, term = NULL, calc = NULL){
-  expr <- substitute(calc) # capture expression
+  if(length(resp) > 1)
+    stop("resp should only be one variable. Add additional groupings to term.", call. = FALSE)
   if(is.null(resp))
     stop("Argument resp is required", call. = FALSE)
 
-  ## Clean NAs
-  ## Note that AND needs two args. Add arbitrary TRUE for cases with only 1 grouping
-  fcall <- function(i) call("!", call("is.na", as.symbol(i)))
-  cleandt <- dat[do.call("&", c(sapply(term, fcall), TRUE))]
-
-  # default is to get the mix, by raw count
+  expr <- substitute(calc)   # need to capture this first in case it's not null
   if(is.null(expr))
-    expr <- substitute(.N)
+    expr <- substitute(.N)   # default is to get the mix, by raw count
 
-  # run calc given by expr
-  ndt <- cleandt[, eval(expr), by = c(resp, term)]
+  # Ensure there are no NAs in the resp column and any term columns
+  cleandt <- dat[!is.na(get(resp))]
 
-  # make it wide, drop labels, do math, bind back together, make it long
+  if(is.null(term))
+    return(cleandt[, .(Pct_Total = eval(expr)/cleandt[, eval(expr)]), by = c(resp)])
+
+  fcall <- function(i) call("[", substitute(cleandt), j=call("!", call("is.na", as.symbol(i))))
+  cdt <- cleandt[Reduce(`&`, lapply(sapply(term, fcall), eval, sys.parent(-1)))]
+  ndt <- cdt[, .(Res = eval(expr)), by = c(resp, term)]
+
   fw <- function(row) row / apply(mat, 2, sum)       # get the pct mix
   formula <- stats::reformulate(term, resp)          # formula defines how we cast
 
@@ -48,6 +50,8 @@ fnWeight <- function(dat, resp = NULL, term = NULL, calc = NULL){
                variable.name = var.name,
                variable.factor = FALSE)
 
+  mdat <- mdat[Pct_Total > 0] # minimize work load on next task
+
   # if not true, then there is no seperator, thus no need to split columns, etc.
   if(length(term) > 1){
     tmp <- data.table(t(mdat[, stringr::str_split(get(var.name), pattern = sep, n = length(term))]))
@@ -57,4 +61,5 @@ fnWeight <- function(dat, resp = NULL, term = NULL, calc = NULL){
   return(mdat)
 }
 
+globalVariables(c(".", "Pct_Total"))
 

@@ -14,5 +14,18 @@ test_that(desc = "basic usage of fnWeight",
             compare <- readRDS("testdata_fnWeight")
             result <- fnWeight(fiberCountyDem, "State", "Year", sum(Population))
             expect_equal(compare, result)
+
+            ## Now test for multiple term variable
+            a <- fnWeight(dat = fiberCountyDem,
+                          resp = "State",
+                          term = c("Year", "County"),
+                          calc = sum(Population))
+            expect_equal(ncol(a), 4)
+
+            ## Test for NO term variables
+            b <- fnWeight(dat = fiberCountyDem,
+                          resp = "State",
+                          calc = sum(Population))
+            expect_equal(ncol(b), 2)
           })
 
