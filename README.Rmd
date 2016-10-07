@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# dvAnalytics
+# dvAnalytics [![Travis-CI Build Status](https://travis-ci.org/bfatemi/dvAnalytics.svg?branch=master)](https://travis-ci.org/bfatemi/dvAnalytics) [![Coverage Status](https://img.shields.io/codecov/c/github/bfatemi/dvAnalytics/master.svg)](https://codecov.io/github/bfatemi/dvAnalytics?branch=master) [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/dvAnalytics)](https://cran.r-project.org/package=dvAnalytics)
 
 The goal of dvAnalytics is to provide specific analytical tools for mining and exploration of Robotic Surgery data. Many of this functions are generalized and can be extended for use in other domains or data problems.
 
